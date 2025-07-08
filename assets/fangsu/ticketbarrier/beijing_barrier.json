@@ -1,0 +1,61 @@
+{
+    "content": [
+        {
+            "id": "beijing1",
+            "text": "beijing1",
+            "model": "fangsu:ticketbarrier/beijing/beijing_1.obj",
+            "flipV": true,
+            "open_model": "fangsu:ticketbarrier/beijing/beijing_1_open.obj",
+            "doors": [
+                {
+                    "model": "fangsu:ticketbarrier/beijing/beijing_1_door.obj",
+                    "use_parted_model": true,
+                    "flipV": true,
+                    "doorType": 1,
+                    "pos": [
+                        {
+                            "subModel": "gatear",
+                            "pos": [
+                                -0.34375,
+                                0.2775,
+                                0
+                            ],
+                            "side": 0,
+                            "step": -0.1
+                        },
+                        {
+                            "subModel": "gatebr",
+                            "pos": [
+                                -0.34375,
+                                0.3,
+                                0
+                            ],
+                            "side": 0,
+                            "step": -0.2
+                        },
+                        {
+                            "subModel": "gateal",
+                            "pos": [
+                                0.34375,
+                                0.2775,
+                                0
+                            ],
+                            "side": 0,
+                            "step": 0.1
+                        },
+                        {
+                            "subModel": "gatebl",
+                            "pos": [
+                                0.34375,
+                                0.3,
+                                0
+                            ],
+                            "side": 0,
+                            "step": 0.2
+                        }
+                    ]
+                }
+            ]
+        }
+    ]
+}

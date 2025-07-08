@@ -1,0 +1,4 @@
+# Made in Blockbench 4.12.3
+newmtl dlon#light
+map_Kd dlon.png
+newmtl none

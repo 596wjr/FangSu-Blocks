@@ -1,0 +1,56 @@
+{
+    "ticketbarrier": {
+        "name": "fangsu.item.ticketbarrier_ex",
+        "scriptFiles": [
+            "fangsu:ticketbarrier.js"
+        ],
+        "isTicketBarrier": true,
+        "group": ""
+    },
+    "ticketbarrier_en": {
+        "name": "fangsu.item.ticketbarrier_en",
+        "scriptFiles": [
+            "fangsu:ticketbarrier.js"
+        ],
+        "isEntrance": true,
+        "isTicketBarrier": true,
+        "group": ""
+    },
+    "screendoor": {
+        "name": "fangsu.item.screendoor",
+        "scriptFiles": [
+            "fangsu:screendoor_door.js"
+        ],
+        "asPlatform": true
+    },
+    "screendoorglass": {
+        "name": "fangsu.item.screendoorglass",
+        "scriptFiles": [
+            "fangsu:screendoor_glass.js"
+        ],
+        "asPlatform": true,
+        "group": ""
+    },
+    "pids": {
+        "name": "fangsu.item.pids",
+        "scriptFiles": [
+            "fangsu:pids.js"
+        ],
+        "asPlatform": true,
+        "group": ""
+    },
+    "sign_onwall": {
+        "name": "fangsu.item.sign_onwall",
+        "scriptFiles": [
+            "fangsu:sign_onwall.js"
+        ],
+        "group": ""
+    },
+    "adv_board": {
+        "name": "fangsu.item.adv_board",
+        "scriptFiles": [
+            "fangsu:adv_board.js"
+        ],
+        "group": ""
+    }
+}

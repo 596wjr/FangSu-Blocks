@@ -1,0 +1,210 @@
+{
+    "common": [
+        {
+            "id": "beijing_sign_a",
+            "text": "fangsu.item.signa",
+            "model": "fangsu:sign/beijing/beijingsign_a.obj",
+            "unit": 8,
+            "tex": [
+                [
+                    0.09881875,
+                    0.11
+                ],
+                [
+                    0.59495625,
+                    0.17
+                ]
+            ],
+            "main": {
+                "subModel": "main",
+                "shape": [
+                    [
+                        4,
+                        0,
+                        5.5,
+                        12,
+                        6,
+                        10.5
+                    ],
+                    [
+                        4,
+                        6,
+                        4,
+                        12,
+                        12,
+                        12
+                    ]
+                ]
+            },
+            "side": {
+                "right": {
+                    "subModel": "sidea",
+                    "shape": [
+                        [
+                            8,
+                            0,
+                            5.5,
+                            9,
+                            6,
+                            10.5
+                        ],
+                        [
+                            8,
+                            6,
+                            4,
+                            9,
+                            12,
+                            12
+                        ]
+                    ]
+                },
+                "left": {
+                    "subModel": "sideb",
+                    "shape": [
+                        [
+                            7,
+                            0,
+                            5.5,
+                            8,
+                            6,
+                            10.5
+                        ],
+                        [
+                            7,
+                            6,
+                            4,
+                            8,
+                            12,
+                            12
+                        ]
+                    ]
+                }
+            },
+            "pole": {
+                "subModel": "pole",
+                "shape": [
+                    [
+                        7.5,
+                        8,
+                        7.5,
+                        8.5,
+                        16,
+                        8.5
+                    ]
+                ]
+            }
+        },
+        {
+            "id": "beijing_sign_b",
+            "text": "fangsu.item.signb",
+            "model": "fangsu:sign/beijing/beijing_sign_b.obj",
+            "unit": 8,
+            "base_color": "131730",
+            "tex": [
+                [
+                    0.1,
+                    0.11
+                ],
+                [
+                    0.6,
+                    0.11
+                ]
+            ],
+            "main": {
+                "subModel": "main",
+                "shape": [
+                    [
+                        4,
+                        0,
+                        5.5,
+                        12,
+                        12,
+                        10.5
+                    ]
+                ]
+            },
+            "side": {
+                "left": {
+                    "subModel": "sidea",
+                    "shape": [
+                        [
+                            7,
+                            0,
+                            5.5,
+                            8,
+                            12,
+                            10.5
+                        ]
+                    ]
+                },
+                "right": {
+                    "subModel": "sideb",
+                    "shape": [
+                        [
+                            8,
+                            0,
+                            5.5,
+                            9,
+                            12,
+                            10.5
+                        ]
+                    ]
+                }
+            },
+            "pole": {
+                "subModel": "pole",
+                "shape": [
+                    [
+                        7.5,
+                        8,
+                        7.5,
+                        8.5,
+                        16,
+                        8.5
+                    ]
+                ]
+            }
+        }
+    ],
+    "on_wall": [
+        {
+            "id": "beijing_sign_a_onwall",
+            "text": "fangsu.item.signa_onwall",
+            "model": "fangsu:sign/beijing/beijingsign_a_onwall.obj",
+            "unit": 8,
+            "tex": [
+                [
+                    0.25,
+                    -0.37
+                ],
+                [
+                    0.75,
+                    -0.37
+                ]
+            ],
+            "main": {
+                "subModel": "main",
+                "shape": [
+                    [
+                        4,
+                        2.75,
+                        14,
+                        12,
+                        13.25,
+                        16
+                    ]
+                ]
+            },
+            "side": {
+                "left": {
+                    "subModel": "sidea",
+                    "shape": []
+                },
+                "right": {
+                    "subModel": "sideb",
+                    "shape": []
+                }
+            }
+        }
+    ]
+}

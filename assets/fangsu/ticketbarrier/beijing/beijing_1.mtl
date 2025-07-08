@@ -1,0 +1,24 @@
+# Made in Blockbench 4.12.4
+newmtl m_fae77e0a-5028-f195-caba-20d89c450eac
+map_Kd barrier_lightgray.png
+newmtl m_64769e19-dab8-745c-e937-981c8d8466c2
+map_Kd barrier_yellow.png
+newmtl m_57816b9e-dd3c-e50c-8031-a4812e7c13c1
+map_Kd barrier_black.png
+newmtl m_3decf1d4-bb79-7704-2ee4-3d3d928292c8
+map_Kd qingshuaka.png
+newmtl m_83c5c9d6-2f1f-4d8b-9893-070f5a21dff2
+map_Kd barrier_stopservice.png
+newmtl m_ce8b381d-1a9b-f02a-1bd0-823c7d8a42df
+map_Kd cross.png
+newmtl m_c9932871-0dc3-e34b-a15c-12b0783022f0
+map_Kd ticket_entrance.png
+newmtl m_71832628-b987-49bd-a908-e68cdf6bb9d0
+map_Kd arrow.png
+newmtl m_f2bc2a1e-3c88-e833-f071-66ee9283ff08
+map_Kd barrier_available.png
+newmtl m_c4ef035f-6b10-f66f-55f4-3296f0e79dee
+map_Kd gate.png
+newmtl m_00b00bfa-9cdf-02ed-985a-b816b141a88f
+map_Kd barrier_led.png
+newmtl none

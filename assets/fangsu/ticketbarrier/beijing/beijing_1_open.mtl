@@ -1,0 +1,6 @@
+# Made in Blockbench 4.12.4
+newmtl m_9a894947-fc8c-6671-2e79-adcc3d371fc1
+map_Kd barrier_black.png
+newmtl m_6ad109dc-dcae-9666-13b8-96429bcf12b1
+map_Kd barrier_cross.png
+newmtl none

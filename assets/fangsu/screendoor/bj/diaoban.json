@@ -1,0 +1,75 @@
+{
+    "model": "fangsu:screendoor/bj/bj_diaoban.obj",
+    "content": [
+        {
+            "id": "style1",
+            "text": "style1",
+            "subModel": "diaoban1",
+            "texArea": [
+                [
+                    -0.5,
+                    0.6195875,
+                    -0.16836875
+                ],
+                [
+                    0.5,
+                    0.12386875,
+                    -0.23363125
+                ]
+            ],
+            "script": [
+                {
+                    "file": "fangsu:screendoor/bj/diaoban/empty.js",
+                    "text": "不显示"
+                },
+                {
+                    "file": "fangsu:screendoor/bj/diaoban/terminal.js",
+                    "text": "终点站"
+                },
+                {
+                    "file": "fangsu:screendoor/bj/diaoban/current.js",
+                    "text": "当前站"
+                },
+                {
+                    "file": "fangsu:screendoor/bj/diaoban/route1.js",
+                    "text": "线路图"
+                }
+            ]
+        },
+        {
+            "id": "style2",
+            "text": "style2",
+            "subModel": "diaoban2",
+            "texArea": [
+                [
+                    -0.5,
+                    0.5625,
+                    -0.1249
+                ],
+                [
+                    0.5,
+                    0.0625,
+                    -0.1249
+                ]
+            ],
+            "script": [
+                {
+                    "file": "fangsu:screendoor/bj/diaoban/empty.js",
+                    "text": "不显示"
+                },
+                {
+                    "file": "fangsu:screendoor/bj/diaoban/terminal.js",
+                    "text": "终点站"
+                },
+                {
+                    "file": "fangsu:screendoor/bj/diaoban/current.js",
+                    "text": "当前站"
+                },
+                {
+                    "file": "fangsu:screendoor/bj/diaoban/route1.js",
+                    "text": "线路图"
+                }
+            ]
+        }
+    ]
+}

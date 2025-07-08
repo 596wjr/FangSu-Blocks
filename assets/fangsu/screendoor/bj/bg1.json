@@ -1,0 +1,361 @@
+{
+    "model": "fangsu:screendoor/bj/bj_screendoor_1.obj",
+    "door": {
+        "left": [
+            {
+                "id": "common",
+                "text": "fangsu.item.bjscdoor_bg1.door.left.common.text",
+                "contentText": "fangsu.item.bjscdoor_bg1.door.left.common.contentText",
+                "doors": [
+                    {
+                        "subModel": "l_c",
+                        "shape": [
+                            [
+                                0,
+                                0,
+                                13,
+                                16,
+                                24,
+                                14
+                            ],
+                            [
+                                0,
+                                6,
+                                14,
+                                24,
+                                10,
+                                16
+                            ]
+                        ],
+                        "step": 1
+                    }
+                ]
+            },
+            {
+                "id": "long",
+                "text": "fangsu.item.bjscdoor_bg1.door.left.long.text",
+                "contentText": "fangsu.item.bjscdoor_bg1.door.left.long.contentText",
+                "doors": [
+                    {
+                        "subModel": "l_l",
+                        "shape": [
+                            [
+                                -6,
+                                0,
+                                13,
+                                16,
+                                24,
+                                14
+                            ],
+                            [
+                                -6,
+                                6,
+                                14,
+                                24,
+                                10,
+                                16
+                            ]
+                        ],
+                        "step": 1.375
+                    }
+                ]
+            },
+            {
+                "id": "short",
+                "text": "fangsu.item.bjscdoor_bg1.door.left.short.text",
+                "contentText": "fangsu.item.bjscdoor_bg1.door.left.short.contentText",
+                "doors": [
+                    {
+                        "subModel": "l_s",
+                        "shape": [
+                            [
+                                6,
+                                0,
+                                13,
+                                16,
+                                24,
+                                14
+                            ],
+                            [
+                                6,
+                                6,
+                                14,
+                                24,
+                                10,
+                                16
+                            ]
+                        ],
+                        "step": 0.625
+                    }
+                ]
+            }
+        ],
+        "right": [
+            {
+                "id": "common",
+                "text": "fangsu.item.bjscdoor_bg1.door.right.common.text",
+                "contentText": "fangsu.item.bjscdoor_bg1.door.right.common.contentText",
+                "doors": [
+                    {
+                        "subModel": "r_c",
+                        "shape": [
+                            [
+                                0,
+                                0,
+                                13,
+                                16,
+                                24,
+                                14
+                            ],
+                            [
+                                -8,
+                                6,
+                                14,
+                                16,
+                                10,
+                                16
+                            ]
+                        ],
+                        "step": -1
+                    }
+                ]
+            },
+            {
+                "id": "long",
+                "text": "fangsu.item.bjscdoor_bg1.door.right.long.text",
+                "contentText": "fangsu.item.bjscdoor_bg1.door.right.long.contentText",
+                "doors": [
+                    {
+                        "subModel": "r_l",
+                        "shape": [
+                            [
+                                0,
+                                0,
+                                13,
+                                22,
+                                24,
+                                14
+                            ],
+                            [
+                                -8,
+                                6,
+                                14,
+                                22,
+                                10,
+                                16
+                            ]
+                        ],
+                        "step": -1.375
+                    }
+                ]
+            },
+            {
+                "id": "short",
+                "text": "fangsu.item.bjscdoor_bg1.door.right.short.text",
+                "contentText": "fangsu.item.bjscdoor_bg1.door.right.short.contentText",
+                "doors": [
+                    {
+                        "subModel": "r_s",
+                        "shape": [
+                            [
+                                0,
+                                0,
+                                13,
+                                10,
+                                24,
+                                14
+                            ],
+                            [
+                                -8,
+                                6,
+                                14,
+                                10,
+                                10,
+                                16
+                            ]
+                        ],
+                        "step": -0.625
+                    }
+                ]
+            }
+        ]
+    },
+    "glass": {
+        "left": [
+            {
+                "id": "glassend",
+                "text": "fangsu.item.bjscdoor_bg1.glass.left.glassend.text",
+                "contentText": "fangsu.item.bjscdoor_bg1.glass.left.glassend.contentText",
+                "subModel": "g_lgn",
+                "shape": [
+                    [
+                        8,
+                        0,
+                        11,
+                        16,
+                        26,
+                        12
+                    ]
+                ]
+            },
+            {
+                "id": "door",
+                "text": "fangsu.item.bjscdoor_bg1.glass.left.door.text",
+                "contentText": "fangsu.item.bjscdoor_bg1.glass.left.door.contentText",
+                "subModel": "g_ld",
+                "shape": [
+                    [
+                        8,
+                        0,
+                        11,
+                        16,
+                        26,
+                        13
+                    ]
+                ],
+                "script": [
+                    {
+                        "scriptFile": "fangsu:screendoor/doorlight.js",
+                        "scriptText": "var doorSide=false;var doorLightModel=\"fangsu:screendoor/bj/bj_sc_1_doorlight.obj\";var doorLightSubModel=\"l\";"
+                    }
+                ]
+            },
+            {
+                "id": "glassdoor",
+                "text": "fangsu.item.bjscdoor_bg1.glass.left.glassdoor.text",
+                "contentText": "fangsu.item.bjscdoor_bg1.glass.left.glassdoor.contentText",
+                "subModel": "g_ldg",
+                "shape": [
+                    [
+                        8,
+                        0,
+                        11,
+                        16,
+                        26,
+                        12
+                    ]
+                ]
+            },
+            {
+                "id": "glass",
+                "text": "fangsu.item.bjscdoor_bg1.glass.left.glass.text",
+                "contentText": "fangsu.item.bjscdoor_bg1.glass.left.glass.contentText",
+                "subModel": "g_lg",
+                "shape": [
+                    [
+                        8,
+                        0,
+                        11,
+                        16,
+                        26,
+                        12
+                    ]
+                ]
+            },
+            {
+                "id": "shortend",
+                "text": "fangsu.item.bjscdoor_bg1.glass.left.shortend.text",
+                "contentText": "fangsu.item.bjscdoor_bg1.glass.left.shortend.contentText",
+                "subModel": "g_lse",
+                "shape": [
+                    [
+                        7,
+                        0,
+                        10,
+                        8,
+                        26,
+                        12
+                    ]
+                ]
+            }
+        ],
+        "right": [
+            {
+                "id": "glassend",
+                "text": "fangsu.item.bjscdoor_bg1.glass.right.glassend.text",
+                "contentText": "fangsu.item.bjscdoor_bg1.glass.right.glassend.contentText",
+                "subModel": "g_rgn",
+                "shape": [
+                    [
+                        0,
+                        0,
+                        11,
+                        8,
+                        26,
+                        12
+                    ]
+                ]
+            },
+            {
+                "id": "door",
+                "text": "fangsu.item.bjscdoor_bg1.glass.right.door.text",
+                "contentText": "fangsu.item.bjscdoor_bg1.glass.right.door.contentText",
+                "subModel": "g_rd",
+                "shape": [
+                    [
+                        0,
+                        0,
+                        11,
+                        8,
+                        26,
+                        13
+                    ]
+                ],
+                "script": [
+                    {
+                        "scriptFile": "fangsu:screendoor/doorlight.js",
+                        "scriptText": "var doorSide=true;var doorLightModel=\"fangsu:screendoor/bj/bj_sc_1_doorlight.obj\";var doorLightSubModel=\"r\";"
+                    }
+                ]
+            },
+            {
+                "id": "glassdoor",
+                "text": "fangsu.item.bjscdoor_bg1.glass.right.glassdoor.text",
+                "contentText": "fangsu.item.bjscdoor_bg1.glass.right.glassdoor.contentText",
+                "subModel": "g_rdg",
+                "shape": [
+                    [
+                        0,
+                        0,
+                        11,
+                        8,
+                        26,
+                        12
+                    ]
+                ]
+            },
+            {
+                "id": "glass",
+                "text": "fangsu.item.bjscdoor_bg1.glass.right.glass.text",
+                "contentText": "fangsu.item.bjscdoor_bg1.glass.right.glass.contentText",
+                "subModel": "g_rg",
+                "shape": [
+                    [
+                        0,
+                        0,
+                        11,
+                        8,
+                        26,
+                        12
+                    ]
+                ]
+            },
+            {
+                "id": "shortend",
+                "text": "fangsu.item.bjscdoor_bg1.glass.right.shortend.text",
+                "contentText": "fangsu.item.bjscdoor_bg1.glass.right.shortend.contentText",
+                "subModel": "g_rse",
+                "shape": [
+                    [
+                        8,
+                        0,
+                        10,
+                        9,
+                        26,
+                        12
+                    ]
+                ]
+            }
+        ]
+    }
+}

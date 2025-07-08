@@ -1,0 +1,48 @@
+{
+    "ticketBarrier": [
+        {
+            "text": "fangsu.item.ticketbarrier.beijing.text",
+            "content": "fangsu:ticketbarrier/beijing_barrier.json"
+        }
+    ],
+    "screendoor": [
+        {
+            "text": "fangsu.item.screendoor.bg1.text",
+            "content": "fangsu:screendoor/bj/bg1.json",
+            "contentText": "fangsu.item.screendoor.bg1.contentText"
+        },
+        {
+            "text": "fangsu.item.screendoor.qg1.text",
+            "content": "fangsu:screendoor/bj/qg1.json",
+            "contentText": "fangsu.item.screendoor.qg1.contentText"
+        }
+    ],
+    "diaoban": [
+        {
+            "text": "fangsu.item.diaoban.hanging_panel.text",
+            "content": "fangsu:screendoor/bj/diaoban.json"
+        }
+    ],
+    "pids": [
+        {
+            "text": "fangsu.item.pids.mtr_js.text",
+            "content": "fangsu:pids/mtr_pids.json"
+        },
+        {
+            "text": "fangsu.item.pids.jcm_js.text",
+            "content": "fangsu:pids/jcm_pids.json"
+        }
+    ],
+    "sign": [
+        {
+            "text": "fangsu.item.sign.beijing_sign.text",
+            "content": "fangsu:sign/beijing/beijing_sign.json"
+        }
+    ],
+    "adv_board": [
+        {
+            "text": "fangsu.item.adv_board.beijing_adv.text",
+            "content": "fangsu:adv_board/beijing_adv.json"
+        }
+    ]
+}
