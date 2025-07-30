@@ -28,3 +28,7 @@ https://modrinth.com/resourcepack/fangsu-blocks
 
 CC BY-NC-SA 4.0  
 [View License Details](https://creativecommons.org/licenses/by-nc-sa/4.0/)
+
+## Thanks
+
+Some code and model resources are from MTR and JCM
