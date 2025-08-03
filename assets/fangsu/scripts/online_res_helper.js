@@ -38,9 +38,7 @@ var WebImageLoader = (function () {
         }
 
         // 创建占位对象
-        var placeholder = url.endsWith(".gif") ?
-            new WebGif(url) :
-            new WebImg(url);
+        var placeholder = url.endsWith(".gif") ? new WebGif(url) : new WebImg(url);
 
         // 加入缓存
         this.cache.set(cacheKey, placeholder);
@@ -52,53 +50,53 @@ var WebImageLoader = (function () {
         this.pending.add(cacheKey);
 
         // 异步下载
-        this.executor.submit(new java.lang.Runnable({
-            run: function () {
-                try {
-                    var startTime = Date.now();
+        this.executor.submit(
+            new java.lang.Runnable({
+                run: function () {
+                    try {
+                        var startTime = Date.now();
 
-                    // 生成缓存路径
-                    var md5 = java.security.MessageDigest.getInstance("MD5");
-                    var hashBytes = md5.digest(new java.lang.String(url).getBytes());
-                    var hash = new java.math.BigInteger(1, hashBytes).toString(16);
-                    var cacheFile = new java.io.File(_instance.cacheDir, hash + ".bin");
+                        // 生成缓存路径
+                        var md5 = java.security.MessageDigest.getInstance("MD5");
+                        var hashBytes = md5.digest(new java.lang.String(url).getBytes());
+                        var hash = new java.math.BigInteger(1, hashBytes).toString(16);
+                        var cacheFile = new java.io.File(_instance.cacheDir, hash + ".bin");
 
-                    // 下载文件（如果缓存不存在）
-                    if (!cacheFile.exists()) {
-                        var conn = new java.net.URL(url).openConnection();
-                        conn.setConnectTimeout(3000);
+                        // 下载文件（如果缓存不存在）
+                        if (!cacheFile.exists()) {
+                            var conn = new java.net.URL(url).openConnection();
+                            conn.setConnectTimeout(3000);
 
-                        var is = conn.getInputStream();
-                        var os = new java.io.FileOutputStream(cacheFile);
-                        var buffer = java.lang.reflect.Array.newInstance(
-                            java.lang.Byte.TYPE, 4096
-                        );
+                            var is = conn.getInputStream();
+                            var os = new java.io.FileOutputStream(cacheFile);
+                            var buffer = java.lang.reflect.Array.newInstance(java.lang.Byte.TYPE, 4096);
 
-                        let bytesRead;
-                        while ((bytesRead = is.read(buffer)) !== -1) {
-                            os.write(buffer, 0, bytesRead);
+                            let bytesRead;
+                            while ((bytesRead = is.read(buffer)) !== -1) {
+                                os.write(buffer, 0, bytesRead);
+                            }
+                            os.close();
+                            is.close();
                         }
-                        os.close();
-                        is.close();
-                    }
 
-                    // 更新图片对象
-                    if (url.endsWith(".gif")) {
-                        placeholder._init(cacheFile);
-                    } else {
-                        placeholder._init(cacheFile);
-                    }
+                        // 更新图片对象
+                        if (url.endsWith(".gif")) {
+                            placeholder._init(cacheFile);
+                        } else {
+                            placeholder._init(cacheFile);
+                        }
 
-                    print(`[INFO] 加载完成: ${url} (${Date.now() - startTime}ms)`);
-                } catch (e) {
-                    print(`[WARN] 加载失败: ${url} - ${e}`);
-                    placeholder._error = e;
-                } finally {
-                    _instance.pending.delete(cacheKey);
-                    if (callback) callback(placeholder);
+                        print(`[INFO] 加载完成: ${url} (${Date.now() - startTime}ms)`);
+                    } catch (e) {
+                        print(`[WARN] 加载失败: ${url} - ${e}`);
+                        placeholder._error = e;
+                    } finally {
+                        _instance.pending.delete(cacheKey);
+                        if (callback) callback(placeholder);
+                    }
                 }
-            }
-        }));
+            })
+        );
 
         return placeholder;
     };
@@ -146,9 +144,7 @@ function WebImg(url) {
             print(`[WARN] 创建失败: ${e}`);
 
             // 使用错误占位图
-            var errorImg = Resources.readBufferedImage(
-                Resources.id("mtrsteamloco:imgnotfound.png")
-            );
+            var errorImg = Resources.readBufferedImage(Resources.id("mtrsteamloco:imgnotfound.png"));
             this._texture = new GraphicsTexture(errorImg.getWidth(), errorImg.getHeight());
             this._texture.graphics.drawImage(errorImg, 0, 0, null);
             this._texture.upload();
@@ -173,7 +169,7 @@ function WebImg(url) {
 
     /**
      * 获取原始AWT图片对象
-     * @returns {java.awt.image.BufferedImage|null} 
+     * @returns {java.awt.image.BufferedImage|null}
      */
     this.get_awt_image = function () {
         return this._texture !== null && this._error === null ? this._texture.bufferedImage : null;
@@ -242,9 +238,7 @@ function WebGif(url) {
             print(`[WARN] 创建失败: ${e}`);
 
             // 使用错误占位GIF
-            this._player = new GifPlayer(
-                Resources.id("mtrsteamloco:imgnotfound.gif")
-            );
+            this._player = new GifPlayer(Resources.id("mtrsteamloco:imgnotfound.gif"));
         }
     };
 
@@ -275,7 +269,7 @@ function WebGif(url) {
 
     this.get_awt_image = function () {
         return this.getCurrent();
-    }
+    };
 
     /**
      * 更新GIF帧

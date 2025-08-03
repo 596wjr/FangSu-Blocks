@@ -1,19 +1,17 @@
 // 碰撞箱数组转字符串
 function collisionBoxArrToStr(collisionArray) {
     let finalShape = "";
-    if (typeof (collisionArray[0]) == Number) {
+    if (typeof collisionArray[0] == Number) {
         for (let i = 0; i < 6; i++) {
-
-            finalShape += (rs[i]).toFixed(2);
+            finalShape += rs[i].toFixed(2);
 
             if (i != 5) finalShape += ",";
         }
     } else
         for (let rs of collisionArray) {
-            if (finalShape != "") finalShape += "/"
+            if (finalShape != "") finalShape += "/";
             for (let i = 0; i < 6; i++) {
-
-                finalShape += (rs[i]).toFixed(2);
+                finalShape += rs[i].toFixed(2);
 
                 if (i != 5) finalShape += ",";
             }
@@ -49,8 +47,8 @@ function offsetCollisionBoxes(collisionBoxes, axis, offset) {
         var newBox = box.slice(0);
 
         // 对轴的两个端点都进行偏移
-        newBox[axisIndex] += offset;      // 第一个点 (x1/y1/z1)
-        newBox[axisIndex + 3] += offset;  // 第二个点 (x2/y2/z2)
+        newBox[axisIndex] += offset; // 第一个点 (x1/y1/z1)
+        newBox[axisIndex + 3] += offset; // 第二个点 (x2/y2/z2)
 
         result.push(newBox);
     }
@@ -87,7 +85,7 @@ function normalizeBoxes(boxes) {
     if (boxes.length === 0) return [];
 
     // 检查是否是单个碰撞箱（非嵌套数组）
-    if (typeof boxes[0] === 'number') {
+    if (typeof boxes[0] === "number") {
         return [boxes.slice(0)]; // 转为二维数组
     }
 
@@ -102,13 +100,10 @@ function normalizeBoxes(boxes) {
 // 碰撞箱字符串转数组
 function collisionBoxStrToArr(collisionString) {
     if (!collisionString) return [];
-    return collisionString.split('/').map(function (part) {
-        return part.split(',').map(Number);
+    return collisionString.split("/").map(function (part) {
+        return part.split(",").map(Number);
     });
 }
-
-
-
 
 // 旋转中心常量定义
 var ROTATION_CENTER = [0.5, 0, 0.5];
@@ -121,8 +116,19 @@ var ROTATION_CENTER = [0.5, 0, 0.5];
  * @param {number} rZ - Z轴旋转弧度
  * @returns {number[][]} 旋转后的碰撞箱列表
  */
-function rotateCollisionBox(collisionBox, rX, rY, rZ, tX, tY, tZ) {
-    [tX, tZ] = [-1 * tZ, tX]
+function rotateCollisionBox(collisionBox, block, rX, rY, rZ, tX, tY, tZ) {
+    let basicRotate = block.getBlockYRot();
+
+    if (basicRotate == 90) {
+        [tX, tZ] = [tZ, -1 * tX];
+    }
+    if (basicRotate == 180) {
+        [tX, tZ] = [-1 * tX, -1 * tZ];
+    }
+    if (basicRotate == 270) {
+        [tX, tZ] = [-1 * tZ, tX];
+    }
+
     var [x1, y1, z1, x2, y2, z2] = collisionBox;
     if (rX == 0 && rY == 0 && rZ == 0) return [[x1 + tX, y1 + tY, z1 + tZ, x2 + tX, y2 + tY, z2 + tZ]];
     var step = 0.1;
@@ -164,8 +170,7 @@ function rotateCollisionBox(collisionBox, rX, rY, rZ, tX, tY, tZ) {
             var finBox = boxCenterToMainBoxWithSkip(rotated, collisionBox, 2);
             result.push([finBox[0] + tX, finBox[1] + tY, finBox[2] + tZ, finBox[3] + tX, finBox[4] + tY, finBox[5] + tZ]);
         }
-    }
-    else {
+    } else {
         // 沿选定轴细分原始碰撞箱
         var subBoxes = getSubBoxes(collisionBox);
         // MinecraftClient.displayMessage("SubBoxes: " + String(subBoxes), false);
@@ -174,8 +179,10 @@ function rotateCollisionBox(collisionBox, rX, rY, rZ, tX, tY, tZ) {
         for (var subBox of subBoxes) {
             var rotated = subBox;
 
-            rotated = rotateX(rotated, rX); rotated = rotateY(rotated, rY); rotated = rotateZ(rotated, rZ);
-            var finBox = boxCenterToMainBox(rotated)
+            rotated = rotateX(rotated, rX);
+            rotated = rotateY(rotated, rY);
+            rotated = rotateZ(rotated, rZ);
+            var finBox = boxCenterToMainBox(rotated);
             result.push([finBox[0] + tX, finBox[1] + tY, finBox[2] + tZ, finBox[3] + tX, finBox[4] + tY, finBox[5] + tZ]);
         }
     }
@@ -218,18 +225,14 @@ function getSubBoxesWithSkip(mainBox, skipAxis) {
         }
     } else if (skipAxis == 1) {
         for (let x = x1; x < x2; x += step) {
-
             for (let z = z1; z < z2; z += step) {
                 subBox.push([x + step * 0.5, (y1 + y2) * 0.5, z + step * 0.5]);
             }
         }
-
     } else if (skipAxis == 2) {
         for (let x = x1; x < x2; x += step) {
             for (let y = y1; y < y2; y += step) {
-
                 subBox.push([x + step * 0.5, y + step * 0.5, (z1 + z2) * 0.5]);
-
             }
         }
     } else
@@ -247,9 +250,11 @@ function boxCenterToMainBoxWithSkip(subBox, oringinal, skipAxis) {
     var [x, y, z] = subBox;
     if (skipAxis == 0) {
         return [oringinal[0], y - 1, z - 1, oringinal[3], y + 1, z + 1];
-    } if (skipAxis == 1) {
+    }
+    if (skipAxis == 1) {
         return [x - 1, oringinal[1], z - 1, x + 1, oringinal[4], z + 1];
-    } if (skipAxis == 2) {
+    }
+    if (skipAxis == 2) {
         return [x - 1, y - 1, oringinal[2], x + 1, y + 1, oringinal[5]];
     }
     return [x - 1, y - 1, z - 1, x + 1, y + 1, z + 1];
@@ -266,11 +271,7 @@ function rotateX(vertex, angle) {
     var z = vertex[2] - 8;
     var cos = Math.cos(angle);
     var sin = Math.sin(angle);
-    return [
-        x + 8,
-        y * cos - z * sin,
-        y * sin + z * cos + 8
-    ];
+    return [x + 8, y * cos - z * sin, y * sin + z * cos + 8];
 }
 
 function rotateY(vertex, angle) {
@@ -280,11 +281,7 @@ function rotateY(vertex, angle) {
     var z = vertex[2] - 8;
     var cos = Math.cos(angle);
     var sin = Math.sin(angle);
-    return [
-        x * cos + z * sin + 8,
-        y,
-        -x * sin + z * cos + 8
-    ];
+    return [x * cos + z * sin + 8, y, -x * sin + z * cos + 8];
 }
 
 function rotateZ(vertex, angle) {
@@ -295,9 +292,5 @@ function rotateZ(vertex, angle) {
     var z = vertex[2] - 8;
     var cos = Math.cos(angle);
     var sin = Math.sin(angle);
-    return [
-        x * cos - y * sin + 8,
-        x * sin + y * cos,
-        z + 8
-    ];
+    return [x * cos - y * sin + 8, x * sin + y * cos, z + 8];
 }

@@ -15,7 +15,7 @@ importPackage(java.awt.geom);
 var res = {};
 
 function create(ctx, state, block) {
-    state.mainModel = checkConfig(block, "mainModel", "fangsu:adv_board/beijing_adv.json");
+    state.mainModel = checkConfig(block, "mainModel", "fangsu:adv_board/common_adv.json");
     state.cacheMainModel = state.mainModel;
     state.subModel = checkConfig(block, "subModel", "adv_1");
     state.cacheSubModel = state.subModel;

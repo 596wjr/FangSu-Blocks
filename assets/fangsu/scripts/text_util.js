@@ -6,10 +6,9 @@ function hasNonCjkPart(str) {
     return TextUtil.getNonCjkParts(str).length > 0;
 }
 
-
 /**
  * 绘制双语言混合字符串（支持中日韩字符与拉丁字符混合排版）
- * 
+ *
  * @param {java.awt.Graphics2D} g - Java AWT绘图上下文对象
  * @param {java.awt.Font} cjkFont - **中日韩文字体基础对象**
  * @param {java.awt.Font} nonCjkFont - **非中日韩文字体基础对象**
@@ -26,24 +25,24 @@ function hasNonCjkPart(str) {
  *                    - 1: 居中对齐（各部分在总宽度内居中）
  *                    - 2: 右对齐（各部分在总宽度内右侧对齐）
  * @returns {number} 实际绘制的总宽度（像素）
- * 
+ *
  * @example
  * // 在(100,200)位置居中绘制高度30的双语文字
  * const width = drawStrDL(g, "路线 Line 1", 100, 200, 30, 1, 1);
- * 
+ *
  * @remarks
  * - 中日韩部分使用65%的高度，非中日韩部分使用30%的高度
  * - 垂直布局固定：中日韩在上方，非中日韩在下方
- * 
+ *
  * @throws 当传入无效的bd/d参数时，控制台输出错误信息并返回0
  */
 function drawStrDL(g, cjkFont, nonCjkFont, str, x, y, h, bd, d) {
     let drawCjkPart = getMatching(str, true);
     let drawNonCjkPart = getMatching(str, false);
-    let cjkSize = drawNonCjkPart == "" ? h * 0.9 : drawCjkPart == "" ? 0 : h * 0.65;
-    let nonCjkSize = drawCjkPart == "" ? h * 0.85 : drawNonCjkPart == "" ? 0 : h * 0.3;
-    let drawCjkFont = cjkFont.deriveFont(cjkSize);
-    let drawNonCjkFont = nonCjkFont.deriveFont(nonCjkSize);
+    let cjkSize = (isGraalJS ? 100 : 1) * drawNonCjkPart == "" ? h * 0.9 : drawCjkPart == "" ? 0 : h * 0.65;
+    let nonCjkSize = (isGraalJS ? 100 : 1) * drawCjkPart == "" ? h * 0.85 : drawNonCjkPart == "" ? 0 : h * 0.3;
+    let drawCjkFont = cjkFont.deriveFont(Font.PLAIN, cjkSize);
+    let drawNonCjkFont = nonCjkFont.deriveFont(Font.PLAIN, nonCjkSize);
     let drawCjkWidth = g.getFontMetrics(drawCjkFont).stringWidth(drawCjkPart);
     let drawNonCjkWidth = g.getFontMetrics(drawNonCjkFont).stringWidth(drawNonCjkPart);
     let drawStrWidth = Math.max(drawCjkWidth, drawNonCjkWidth);
@@ -51,7 +50,7 @@ function drawStrDL(g, cjkFont, nonCjkFont, str, x, y, h, bd, d) {
     switch (bd) {
         case 0:
             bx = x;
-            break
+            break;
         case 1:
             bx = x - 0.5 * drawStrWidth;
             break;
@@ -88,7 +87,7 @@ function drawStrDL(g, cjkFont, nonCjkFont, str, x, y, h, bd, d) {
 
 /**
  * 绘制单行文字（统一字体，不分语言）
- * 
+ *
  * @param {java.awt.Graphics2D} g - Java AWT绘图上下文对象
  * @param {java.awt.Font} font - 统一使用的字体对象
  * @param {string} str - 要绘制的原始字符串
@@ -102,12 +101,12 @@ function drawStrDL(g, cjkFont, nonCjkFont, str, x, y, h, bd, d) {
  * @returns {number} 实际绘制的总宽度（像素）
  */
 function drawStrUnified(g, font, str, x, y, h, align) {
-    let drawFont = font.deriveFont(h);
+    let drawFont = font.deriveFont(Font.PLAIN, h);
     g.setFont(drawFont);
-    
+
     let metrics = g.getFontMetrics();
     let strWidth = metrics.stringWidth(str);
-    
+
     let drawX = x;
     switch (align) {
         case 0: // 左对齐
@@ -122,26 +121,43 @@ function drawStrUnified(g, font, str, x, y, h, align) {
             print("[ERROR] 无效的对齐参数 align=", align);
             return 0;
     }
-    
+
     // 绘制文字
     g.drawString(str, drawX, y);
-    
+
     return strWidth;
 }
 
+function getDLStringWidth(g, cjkFont, nonCjkFont, str, h) {
+    let drawCjkPart = getMatching(str, true);
+    let drawNonCjkPart = getMatching(str, false);
+    let cjkSize = (isGraalJS ? 100 : 1) * drawNonCjkPart == "" ? h * 0.9 : drawCjkPart == "" ? 0 : h * 0.65;
+    let nonCjkSize = (isGraalJS ? 100 : 1) * drawCjkPart == "" ? h * 0.85 : drawNonCjkPart == "" ? 0 : h * 0.3;
+    let drawCjkFont = cjkFont.deriveFont(Font.PLAIN, cjkSize);
+    let drawNonCjkFont = nonCjkFont.deriveFont(Font.PLAIN, nonCjkSize);
+    let drawCjkWidth = g.getFontMetrics(drawCjkFont).stringWidth(drawCjkPart);
+    let drawNonCjkWidth = g.getFontMetrics(drawNonCjkFont).stringWidth(drawNonCjkPart);
+    return Math.max(drawCjkWidth, drawNonCjkWidth);
+}
+
+function getUnifiedStringWidth(g, font, str, h) {
+    let drawFont = font.deriveFont(Font.PLAIN, h);
+    g.setFont(drawFont);
+
+    let metrics = g.getFontMetrics();
+    return (strWidth = metrics.stringWidth(str));
+}
 
 function getLineWrap(g, str, font, fontSize, w) {
-    return TextUtil.isCjk(str) ?
-        getCjkLineWrap(g, String(str), font, fontSize, w) :
-        getNoncjkLineWrap(g, String(str), font, fontSize, w)
+    return TextUtil.isCjk(str) ? getCjkLineWrap(g, String(str), font, fontSize, w) : getNoncjkLineWrap(g, String(str), font, fontSize, w);
 }
 
 function getCjkLineWrap(g, str, font, fontSize, w) {
-    let finalFont = font.deriveFont(fontSize);
+    let finalFont = font.deriveFont(Font.PLAIN, fontSize);
     let currentLine = "";
     let lines = [];
     for (let char of str) {
-        if (char == '\n') {
+        if (char == "\n") {
             lines.push(currentLine);
             currentLine = "";
         }
@@ -159,12 +175,12 @@ function getCjkLineWrap(g, str, font, fontSize, w) {
 }
 
 function getNoncjkLineWrap(g, str, font, fontSize, w) {
-    let finalFont = font.deriveFont(fontSize);
+    let finalFont = font.deriveFont(Font.PLAIN, fontSize);
     let words = str.split(" ");
     let currentLine = "";
     let lines = [];
     for (let char of words) {
-        if (char == '\n') {
+        if (char == "\n") {
             lines.push(currentLine);
             currentLine = "";
         }
@@ -184,13 +200,11 @@ function getNoncjkLineWrap(g, str, font, fontSize, w) {
                 if (g.getFontMetrics(finalFont).stringWidth(localTestLine) >= w) {
                     lines.push(currentLine + "-");
                     currentLine = letter;
-                }
-                else {
+                } else {
                     currentLine = currentLine + letter;
                 }
             }
             currentLine = currentLine + " ";
-
         }
     }
     if (currentLine) lines.push(currentLine);

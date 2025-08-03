@@ -17,6 +17,17 @@ importClass(java.util.Locale);
 include(Resources.id("fangsu:scripts/gif_helper.js"));
 include(Resources.id("fangsu:scripts/online_res_helper.js"));
 include(Resources.id("fangsu:scripts/text_util.js"));
+include(Resources.id("fangsu:scripts/route_helper.js"));
+
+showMsgBox(null, [{ text: "确定 Confirm", function: () => MinecraftClient.setScreen(null) }], "安全警告 Security Warn", [
+    "方速方块包安全提示",
+    "本资源包使用以下Java库, 如您担心会产生安全隐患, 请您卸载方速方块包",
+    "Security warn by FangSu Blocks",
+    "Following Java libs are used, if you think there will be",
+    "any security issues, please uninstall FangSu Blocks",
+    "",
+    "java.io java.nio java.lang java.net java.util java.awt org.lwjgl"
+]);
 
 /**
  * 在用“||”分割的字符串中，返回“||”之前的所有字符。
@@ -25,7 +36,8 @@ include(Resources.id("fangsu:scripts/text_util.js"));
  * @returns {String}
  */
 function getNonExtraParts(src) {
-    return src.includes("||") ? TextUtil.getNonExtraParts(src) : src;
+    if (src) return src.includes("||") ? TextUtil.getNonExtraParts(src) : src;
+    else return "";
 }
 
 function getExtraParts(src) {
@@ -233,7 +245,7 @@ function loadResource(type, path) {
             resL.get = (item_name) => {
                 loadResource("model", "fangsu:err/unknown_model.obj");
             };
-        } else if (type == "str") resL = "?";
+        } else if (type == "str") resL = "{}";
         else if (type == "json" || type == "JSON") resL = {};
         else if (type == "gif") {
             resL = new GifPlayer("mtrsteamloco:imgnotfound.gif");
@@ -257,9 +269,9 @@ function parseObj(o) {
 }
 
 function getPlatformById(id) {
-    for (let route of MTRClientData.PLATFORMS) {
-        if (String(new java.lang.Long(route.id)) === id) {
-            return route;
+    for (let plat of MTRClientData.PLATFORMS) {
+        if (String(new java.lang.Long(plat.id)) === String(new java.lang.Long(id))) {
+            return plat;
         }
     }
     return null;
@@ -332,7 +344,8 @@ function getDestinationByRouteId(id) {
     // print(destinationPlatform);
     // print(destinationPlatform.getMidPos());
     // print(station);
-    return station.name;
+    if (station) return station.name;
+    else return "未命名|Undefinded";
 }
 
 function getDestinationByPlatform(plat) {
@@ -343,7 +356,9 @@ function getDestinationByPlatform(plat) {
         if (platforms.size() > 0) {
             var lastPlat = platforms.get(platforms.size() - 1);
             var station = getStationByPlatform(getPlatformById(String(new java.lang.Long(lastPlat.platformId))));
-            station.name && destSet.add("" + station.name); // 显式转为JS字符串
+            if (station) {
+                station.name && destSet.add("" + station.name); // 显式转为JS字符串
+            } else destSet.add("未命名|Undefinded");
         }
     });
 
@@ -363,39 +378,6 @@ function findStation(station, stationList) {
         if (station.name === currentStation.stationName) return i;
     }
     return -1;
-}
-
-function routeToObj(route) {
-    let drawStations = [];
-    if (route.stationDetails == null) drawStations = [];
-    else
-        for (let station of route.stationDetails) {
-            let transferInfo = [];
-            if (station.interchangeInfo) {
-                for (interchange of station.interchangeInfo) {
-                    if (interchange.isConnectingStation) continue;
-                    if (getNonExtraParts(interchange.name) == getNonExtraParts(route.routeName)) continue;
-                    transferInfo.push({ routeName: interchange.name, routeColor: interchange.color });
-                }
-                drawStations.push({ stationName: station.stationName, transInfo: transferInfo });
-            } else if (station.interchangeRoutes) {
-                for (interchange of station.interchangeRoutes) {
-                    if (interchange.isConnectingStation) continue;
-                    if (getNonExtraParts(interchange.name) == getNonExtraParts(route.routeName)) continue;
-                    transferInfo.push({ routeName: interchange.name, routeColor: intToColor(interchange.color) });
-                }
-                drawStations.push({ stationName: station.stationName, transInfo: transferInfo });
-            } else drawStations.push({ stationName: station.stationName, transInfo: [] });
-        }
-    return {
-        routeName: route.routeName,
-        routeColor: route.routeColor,
-        destination: route.destination,
-        circularState: route.circularState,
-        depotName: route.depotName,
-        stationDetails: route.stationDetails,
-        drawStations
-    };
 }
 
 /**
@@ -487,7 +469,7 @@ function addPrefix(str, prefix, addSpace) {
     let finalCjk = orinCjk;
     let finalNonCjk = orinNonCjk;
     if (orinCjk != "") finalCjk = getMatching(prefix, true) + (addSpace ? " " : "") + orinCjk;
-    if (orinNonCjk != "") finalNonCjk = getMatching(prefix, false) + (addSpace ? " " : "") + orinNonCjk;
+    if (orinNonCjk != "") finalNonCjk = getMatching(prefix, false) + (addSpace ? " " : " ") + orinNonCjk;
     if (finalCjk != "" && finalNonCjk != "") return finalCjk + "|" + finalNonCjk;
     if (finalCjk == "" && finalNonCjk != "") return finalNonCjk;
     if (finalCjk != "" && finalNonCjk == "") return finalCjk;
@@ -516,27 +498,28 @@ function convertToGrayscaleDarkened(bufferedImage) {
 
 function drawWaterPrint(g, w, h) {
     g.setColor(rgbaToColor(166, 166, 188, 50));
+    // g.setColor(Color.BLACK);
     let font = loadResource("font", "mtrsteamloco:fonts/ae.ttf");
     let versionJSON = loadResource("str", "fangsu:version.json");
     let versionObj = JSON.parse(versionJSON);
     let dispName = ComponentUtil.getString(ComponentUtil.translatable("cfg.version." + versionObj.ver)) + " " + versionObj.name;
     let currentY = h * 0.8;
-    drawStrDL(g, font, font, ComponentUtil.getString(ComponentUtil.translatable("cfg.version")), w * 0.97, currentY, h * 0.02, 2, 2);
+    drawStrUnified(g, font, ComponentUtil.getString(ComponentUtil.translatable("cfg.version")), w * 0.97, currentY, h * 0.02, 2, 2);
     currentY += h * 0.02;
-    drawStrDL(g, font, font, dispName, w * 0.97, currentY, h * 0.02, 2, 2);
+    drawStrUnified(g, font, dispName, w * 0.97, currentY, h * 0.02, 2, 2);
     currentY += h * 0.02;
-    drawStrDL(g, font, font, "方速方块包 FangSu Blocks", w * 0.97, currentY, h * 0.02, 2, 2);
+    drawStrUnified(g, font, "方速方块包 FangSu Blocks", w * 0.97, currentY, h * 0.02, 2, 2);
     currentY += h * 0.02;
-    drawStrDL(g, font, font, "代码 Code By 596wjr", w * 0.97, currentY, h * 0.02, 2, 2);
+    drawStrUnified(g, font, "代码 Code By 596wjr", w * 0.97, currentY, h * 0.02, 2, 2);
     currentY += h * 0.02;
-    drawStrDL(g, font, font, "ANTE 版本 : " + Resources.getNTEVersionInt(), w * 0.97, currentY, h * 0.02, 2, 2);
+    drawStrUnified(g, font, "ANTE 版本 : " + Resources.getNTEVersionInt(), w * 0.97, currentY, h * 0.02, 2, 2);
     currentY += h * 0.02;
     if (Resources.getNTEVersionInt() > versionObj.max_nte) {
         g.setColor(Color.RED);
-        drawStrDL(
+        drawStrUnified(
             g,
             font,
-            font,
+
             ComponentUtil.getString(ComponentUtil.translatable("cfg.version.ante_too_high", String(Resources.getNTEVersionInt()), String(versionObj.max_nte))),
             w * 0.97,
             currentY,
@@ -549,10 +532,10 @@ function drawWaterPrint(g, w, h) {
     }
     if (Resources.getNTEVersionInt() < versionObj.min_nte) {
         g.setColor(Color.RED);
-        drawStrDL(
+        drawStrUnified(
             g,
             font,
-            font,
+
             ComponentUtil.getString(ComponentUtil.translatable("cfg.version.ante_too_low", String(Resources.getNTEVersionInt()), String(versionObj.min_nte))),
             w * 0.97,
             currentY,
@@ -564,9 +547,9 @@ function drawWaterPrint(g, w, h) {
         currentY += h * 0.02;
     }
     if (versionObj.ver == "release") {
-        drawStrDL(g, font, font, "前往 https://afdian.com/a/596wjr 支持我", w * 0.97, currentY, h * 0.02, 2, 2);
+        drawStrUnified(g, font, "前往 https://afdian.com/a/596wjr 支持我", w * 0.97, currentY, h * 0.02, 2, 2);
         currentY += h * 0.02;
-        drawStrDL(g, font, font, "Support me at https://afdian.com/a/596wjr", w * 0.97, currentY, h * 0.02, 2, 2);
+        drawStrUnified(g, font, "Support me at https://afdian.com/a/596wjr", w * 0.97, currentY, h * 0.02, 2, 2);
         currentY += h * 0.02;
     }
     return;
@@ -623,8 +606,10 @@ function isRelease() {
 }
 
 function setDebugInfo(str) {
-    MinecraftClient.displayMessage("[§l" + Date.now() + "§r] " + "[§3§lDEBUG§r] " + str, false);
-    print("[DEBUG] ", str);
+    // if (getClientConfig("bool", "show_debug", false)) {
+    // MinecraftClient.displayMessage("[§l" + Date.now() + "§r] " + "[§3§lDEBUG§r] " + str, false);
+    // print("[DEBUG] ", str);
+    // }
 }
 function setWarnInfo(str) {
     MinecraftClient.displayMessage("[§l" + Date.now() + "§r] " + "[§6§lWARN§r] " + str, false);
@@ -632,7 +617,7 @@ function setWarnInfo(str) {
 }
 function setErrorInfo(str) {
     MinecraftClient.displayMessage("[§l" + Date.now() + "§r] " + "[§4§lERROR§r] " + str, false);
-    print("[ERROR] ", str);
+    print("[ERROR] ", String(str.stack));
 }
 
 function runCommand(command) {
@@ -751,4 +736,267 @@ function openUri(uriString) {
     } catch (e) {
         setWarnInfo("打开URI失败: " + e);
     }
+}
+
+function getShortId(obj) {
+    var str = "";
+    if (Array.isArray(obj)) {
+        // 创建数组副本（避免修改原数组）
+        var arrCopy = [];
+        for (let i = 0; i < obj.length; i++) {
+            arrCopy[i] = obj[i];
+        }
+
+        // 统一元素类型并排序
+        arrCopy.sort(function (a, b) {
+            a = String(a);
+            b = String(b);
+            if (a < b) return -1;
+            if (a > b) return 1;
+            return 0;
+        });
+
+        str = JSON.stringify(arrCopy);
+    } else if (typeof obj == "string") {
+        str = obj;
+    } else {
+        str = JSON.stringify(obj);
+    }
+
+    // FNV-1a哈希算法
+    var hash = 0x811c9dc5;
+    for (let i = 0; i < str.length; i++) {
+        hash ^= str.charCodeAt(i);
+        hash *= 0x01000193;
+    }
+
+    return hash.toString(16);
+}
+
+function isGraalJS() {
+    return false;
+    return Resources.getNTEVersionInt() >= 10101;
+}
+
+importClass(java.awt.image.BufferedImage);
+importClass(java.awt.Color);
+importClass(java.awt.Graphics2D);
+importClass(java.awt.RenderingHints);
+importClass(java.awt.Transparency);
+
+/**
+ * 使用像素操作更改图像颜色 (ES5 兼容版本)
+ * @param {java.awt.Image} originalImage 原始图像
+ * @param {java.awt.Color} newColor 新颜色
+ * @returns {java.awt.Image} 更改颜色后的图像
+ */
+function changeImageColor(originalImage, newColor) {
+    // 将原始图像转换为 BufferedImage
+    var width = originalImage.getWidth(null);
+    var height = originalImage.getHeight(null);
+
+    var bufferedImage = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
+
+    var g2d = bufferedImage.createGraphics();
+    g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+    g2d.drawImage(originalImage, 0, 0, null);
+    g2d.dispose();
+
+    // 提取新颜色的RGB分量
+    var newRed = newColor.getRed();
+    var newGreen = newColor.getGreen();
+    var newBlue = newColor.getBlue();
+
+    // 遍历并修改所有像素
+    for (var y = 0; y < height; y++) {
+        for (var x = 0; x < width; x++) {
+            var rgb = bufferedImage.getRGB(x, y);
+
+            // 获取原始alpha通道
+            var alpha = (rgb >> 24) & 0xff;
+
+            // 如果像素完全透明，则跳过
+            if (alpha === 0) {
+                continue;
+            }
+
+            // 组合新颜色(保持原始alpha)
+            var newRGB = (alpha << 24) | (newRed << 16) | (newGreen << 8) | newBlue;
+            bufferedImage.setRGB(x, y, newRGB);
+        }
+    }
+
+    return bufferedImage;
+}
+
+// function getClientConfig(type, key, default_val) {
+//     let grKey = `clientConfig_${key}`;
+//     if (GlobalRegister.containsKey(grKey)) return ClientConfig.get(key);
+//     else {
+//         let textField;
+//         if (type == "bool") {
+//             textField = newBooleanToggleResponder(key, ComponentUtil.translatable(`fangsu.ante.clientconfig.${key}`), default_val);
+//         } else {
+//             textField = new TextField(key, ComponentUtil.translatable(`fangsu.ante.clientconfig.${key}`), default_val);
+//         }
+//         ClientConfig.register(textField);
+//         ClientConfig.save();
+//         return default_val;
+//     }
+// }
+
+// function newBooleanToggleResponder(key, name, defaultValue) {
+//     return new ConfigResponder({
+//         key: () => key,
+//         init: (configMap) => {
+//             if (!configMap.containsKey(key)) configMap.put(key, defaultValue + "");
+//         },
+//         getListEntries: (configMap, builder, screenSupplier) => {
+//             let value = configMap.get(key);
+//             let flag = false;
+//             if (value + "" == "true") flag = true;
+//             return [
+//                 builder
+//                     .startBooleanToggle(name, flag)
+//                     .setDefaultValue(defaultValue)
+//                     .setSaveConsumer((value) => {
+//                         configMap.put(key, value + "");
+//                     })
+//                     .build()
+//             ];
+//         }
+//     });
+// }
+
+function dispErrScreen(Err) {
+    print(`[ERROR] in FangSu scripts
+            ${Err.stack}`);
+    let errScreen = new IScreen.WithTextrue(ComponentUtil.literal("errScreen"));
+    errScreen.initFunction = (screen, w, h) => {
+        let state = screen.state;
+        state.w = w;
+        state.h = h;
+    };
+    errScreen.renderFunction = (screen, mx, my, d) => {
+        let tex = screen.texture;
+        let g = tex.graphics;
+        let state = screen.state;
+
+        let { width: w, height: h } = tex;
+
+        let errorFont = Resources.getSystemFont("Serif");
+        g.setColor(Color.BLUE);
+        g.fillRect(0, 0, w, h);
+        g.setColor(Color.WHITE);
+        g.setFont(errorFont.deriveFont(Font.PLAIN, h * 0.2));
+        g.drawString(":(", w * 0.15, h * 0.3);
+        g.setFont(errorFont.deriveFont(Font.PLAIN, h * 0.05));
+        g.drawString("你的游戏出现了问题, 可能是自定义资源包的问题", w * 0.15, h * 0.4);
+        g.drawString("请先恢复自定义配置, 如果仍旧错误可以寻求他人帮助", w * 0.15, h * 0.5);
+
+        let currentLine = "";
+        let txL = [];
+        let ft = errorFont.deriveFont(Font.PLAIN, h * 0.03);
+        for (let char of String(Err)) {
+            let testLine = currentLine + char;
+            let testWidth = g.getFontMetrics(ft).stringWidth(testLine);
+            if (testWidth <= w * 0.55) {
+                currentLine = testLine;
+            } else {
+                txL.push(currentLine);
+                currentLine = char;
+            }
+        }
+        if (currentLine) txL.push(currentLine);
+        let drawY = h * 0.7;
+        g.setFont(ft);
+        for (let tx of txL) {
+            g.drawString(tx, w * 0.35, drawY);
+            drawY += h * 0.035;
+        }
+        g.drawString("At: " + Err.fileName + ":" + Err.lineNumber, w * 0.35, drawY);
+        drawY += h * 0.035;
+        g.drawString("请求帮助时, 请不要只发送这个窗口的截图", w * 0.35, drawY);
+
+        drawWaterPrint(g, w, h);
+        tex.upload();
+    };
+    MinecraftClient.setScreen(errScreen);
+}
+
+function showMsgBox(basicTexture, buttons, title, lines) {
+    let sc = new IScreen.WithTextrue(ComponentUtil.literal("msgbox"));
+    let font = loadResource("font", "mtrsteamloco:fonts/misans-bold.otf");
+    sc.initFunction = (screen, w, h) => {
+        let state = screen.state;
+        state.w = w;
+        state.h = h;
+        // let widths = [getUnifiedStringWidth(screen.texture.graphics, font, title, h * 0.05)];
+        // lines.forEach((line) => {
+        //     widths.puth(getUnifiedStringWidth(screen.texture.graphics, font, typeof line == "string" ? line : line.text, h * 0.05));
+        // });
+        // state.maxWidth = Math.max(widths);
+        // state.maxWidth = w * 0.5;
+    };
+    sc.renderFunction = (screen, x, y, d) => {
+        let tex = screen.texture;
+        let g = tex.graphics;
+        let state = screen.state;
+
+        let { width: w, height: h } = tex;
+        let posRateX = w / state.w;
+        let posRateY = h / state.h;
+        let mx = x * posRateX;
+        let my = y * posRateY;
+
+        state.maxWidth = w * 0.5;
+
+        let currentY = h * 0.5 - lines.length * h * 0.05 * 0.5;
+
+        if (basicTexture) g.drawImage(basicTexture, 0, 0, w, h, null);
+
+        g.setColor(Color.BLUE);
+        g.fillRect(w * 0.5 - state.maxWidth * 0.5 - w * 0.05, currentY, w * 0.1 + state.maxWidth, h * 0.07);
+        g.setColor(Color.WHITE);
+        g.fillRect(w * 0.5 - state.maxWidth * 0.5 - w * 0.05, currentY + h * 0.07, w * 0.1 + state.maxWidth, (lines.length + 2) * h * 0.04);
+
+        g.setColor(Color.WHITE);
+        drawStrUnified(g, font, title, w * 0.5, currentY + h * 0.06, h * 0.04, 1);
+        currentY += h * 0.06;
+
+        for (let line of lines) {
+            g.setColor(Color.BLACK);
+            drawStrUnified(g, font, typeof line == "string" ? line : line.text, w * 0.5, currentY + h * 0.05, h * 0.03, 1);
+            currentY += h * 0.04;
+        }
+
+        if (buttons)
+            for (let i = 0; i < buttons.length; i++) {
+                let buttonWidth = state.maxWidth / buttons.length;
+                let currentX = w * 0.5 - buttons.length * buttonWidth * 0.5 + buttonWidth * i;
+                let selected = mx > currentX + w * 0.01 && mx < currentX + buttonWidth - w * 0.01 && my > currentY + h * 0.025 && my < currentY + h * 0.08;
+                // g.setColor(selected ? rgbToColor(127, 127, 127) : Color.GRAY);
+                // g.fillRect(currentX + w * 0.01, currentX + buttonWidth - w * 0.01, currentY + h * 0.025, currentY + h * 0.08);
+                g.setColor(selected ? Color.BLACK : Color.GRAY);
+                drawStrUnified(g, font, buttons[i].text, currentX + buttonWidth * 0.5, currentY + h * 0.07, h * 0.035, 1);
+
+                if (state.clickInfo && selected) buttons[i].function();
+            }
+
+        tex.upload();
+    };
+    sc.mouseReleasedFunction = (screen, x, y, i) => {
+        if (screen.state.skipFirstClick) {
+            screen.state.skipFirstClick = false;
+            return true;
+        }
+        let tex = screen.texture;
+        let { width: w, height: h } = tex;
+        let state = screen.state;
+        let mx = (w / state.w) * x;
+        let my = (h / state.h) * y;
+        screen.state.clickInfo = { x: mx, y: my };
+        return true;
+    };
+    MinecraftClient.setScreen(sc);
 }

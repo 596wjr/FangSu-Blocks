@@ -1,56 +1,56 @@
 {
     "ticketbarrier": {
         "name": "fangsu.item.ticketbarrier_ex",
-        "scriptFiles": [
-            "fangsu:ticketbarrier.js"
-        ],
+        "scriptFiles": ["fangsu:ticketbarrier.js"],
         "isTicketBarrier": true,
-        "group": ""
+        "group": "fangsu.group.main"
     },
     "ticketbarrier_en": {
         "name": "fangsu.item.ticketbarrier_en",
-        "scriptFiles": [
-            "fangsu:ticketbarrier.js"
-        ],
+        "scriptFiles": ["fangsu:ticketbarrier.js"],
         "isEntrance": true,
         "isTicketBarrier": true,
-        "group": ""
+        "group": "fangsu.group.main"
     },
     "screendoor": {
         "name": "fangsu.item.screendoor",
-        "scriptFiles": [
-            "fangsu:screendoor_door.js"
-        ],
-        "asPlatform": true
+        "scriptFiles": ["fangsu:screendoor_door.js"],
+        "asPlatform": true,
+        "group": "fangsu.group.main"
     },
     "screendoorglass": {
         "name": "fangsu.item.screendoorglass",
-        "scriptFiles": [
-            "fangsu:screendoor_glass.js"
-        ],
+        "scriptFiles": ["fangsu:screendoor_glass.js"],
         "asPlatform": true,
-        "group": ""
+        "group": "fangsu.group.main"
+    },
+    "diaoban": {
+        "name": "fangsu.item.diaoban",
+        "scriptFiles": ["fangsu:diaoban.js"],
+        "asPlatform": true,
+        "group": "fangsu.group.main"
     },
     "pids": {
         "name": "fangsu.item.pids",
-        "scriptFiles": [
-            "fangsu:pids.js"
-        ],
+        "scriptFiles": ["fangsu:pids.js"],
         "asPlatform": true,
-        "group": ""
+        "group": "fangsu.group.main"
     },
+
     "sign_onwall": {
         "name": "fangsu.item.sign_onwall",
-        "scriptFiles": [
-            "fangsu:sign_onwall.js"
-        ],
-        "group": ""
+        "scriptFiles": ["fangsu:sign_onwall.js"],
+        "group": "fangsu.group.main"
     },
     "adv_board": {
         "name": "fangsu.item.adv_board",
-        "scriptFiles": [
-            "fangsu:adv_board.js"
-        ],
-        "group": ""
+        "scriptFiles": ["fangsu:adv_board.js"],
+        "group": "fangsu.group.main"
+    },
+
+    "route_info_sign": {
+        "name": "fangsu.item.route_info_sign",
+        "scriptFiles": ["fangsu:routeinfosign.js"],
+        "group": "fangsu.group.main"
     }
 }

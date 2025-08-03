@@ -9,6 +9,7 @@ include(Resources.id("fangsu:scripts/mtrselect.js"));
 include(Resources.id("fangsu:scripts/text_util.js"));
 include(Resources.id("fangsu:scripts/config_sc.js"));
 include(Resources.id("fangsu:scripts/costom_item_helper.js"));
+include(Resources.id("fangsu:scripts/gt_helper.js"));
 importPackage(java.awt);
 importPackage(java.awt.geom);
 
@@ -58,6 +59,8 @@ function create(ctx, state, block) {
     };
     state.cacheConfig = {};
     state.config = {};
+    state.texW = 10;
+    state.texH = 10;
 }
 
 function render(ctx, state, block) {
@@ -83,10 +86,15 @@ function render(ctx, state, block) {
         }
     }
     if (JSON.stringify(state.config) !== "{}") {
+        setDebugInfo(`Upload ExtraConfig ${JSON.stringify(state.extraConfig)}`);
         state.extraConfig = state.config;
         state.config = {};
         block.putCustomConfig("extraConfig", JSON.stringify(state.extraConfig));
         block.sendUpdateC2S();
+    }
+    if (JSON.stringify(state.extraConfig) != JSON.stringify(state.cacheExtraConfig)) {
+        state.cacheExtraConfig = state.extraConfig;
+        state.needRefFunc = true;
     }
 
     if (state.mtrSelection)
@@ -98,6 +106,8 @@ function render(ctx, state, block) {
                 }
                 block.putCustomConfig("platformState", JSON.stringify(state.platformState));
                 block.sendUpdateC2S();
+                state.mtrSelection = [];
+                state.needRefFunc = true;
             }
 
     if (state.needRef) {
@@ -109,7 +119,7 @@ function render(ctx, state, block) {
         if (state.cacheSubMod in loaded) state.model = loaded[state.cacheSubMod];
         else {
             state.model = JSON.parse(loadRes(res, "str", state.cacheMainMod)).content[0];
-            block.putCustomConfig("subModel", state.model.key);
+            block.putCustomConfig("subModel", String(state.model.key));
             block.sendUpdateC2S();
         }
 
@@ -283,12 +293,12 @@ function render(ctx, state, block) {
             }
             state.dmhdisp = new DynamicModelHolder();
             state.dmhdisp.uploadLater(dispRawModel);
-            texW = 150 * state.width;
-            texH = 150 * state.height;
+            state.texW = 150 * state.width;
+            state.texH = 150 * state.height;
         } else {
             let mainModel = loadRes(res, "model", state.model.model);
             let model = state.model;
-            print("[DEBUG] ", JSON.stringify(model));
+            // print("[DEBUG] ", JSON.stringify(model));
             let rawModel = mainModel.copy();
             rawModel.sourceLocation = null;
             if (model.flipV) rawModel.applyUVMirror(false, true);
@@ -319,60 +329,102 @@ function render(ctx, state, block) {
             dispRawModel.generateNormals();
             state.dmhdisp = new DynamicModelHolder();
             state.dmhdisp.uploadLater(dispRawModel);
-            texW = model.texSize[0];
-            texH = model.texSize[1];
+            state.texW = model.texSize[0];
+            state.texH = model.texSize[1];
         }
         let modelInfo = state.model;
 
-        try {
-            state.gt.close();
-        } catch (e) {}
-        state.gt = new GraphicsTexture(texW, texH);
-
-        state.drawScript = String(loadResource("str", modelInfo.script));
-        print(String(state.drawScript));
-        try {
-            state.drawFunction = new Function(`
-                ${state.drawScript}
-                return draw;
-            `)();
-            state.drawState = {};
-        } catch (e) {
-            setErrorInfo("Failed to parse draw function :" + e);
-        }
+        // try {
+        //     state.gt.close();
+        // } catch (e) {}
+        // state.gt = new GraphicsTexture(texW, texH);
 
         state.needRef = false;
         state.needRefBox = true;
+        state.needRefFunc = true;
         state.renderCD = -100;
     }
 
-    if (state.renderCD <= 0) {
-        //MinecraftClient.displayMessage("reloading pids..." + String(state.renderCD), false);
-        state.renderCD = 0.1;
-        let arrivalInfoList = getArrivalInfoList(block, state);
-        let extraInfoList = [];
-        //print("[DEBUG] arrivalInfoList: " + JSON.stringify(arrivalInfoList));
-        state.gt.upload();
-        let g = state.gt.graphics;
-        let drawInfo = { arrivalInfoList, extraInfoList, texArea: [0, 0, state.gt.width, state.gt.height], ctx, block, entity: block };
-
+    if (state.needRefFunc) {
+        setDebugInfo("now refereshing function");
+        state.drawScript = String(loadResource("str", state.model.script));
+        // print(String(state.drawScript));
         try {
-            state.drawFunction(g, state.drawState, drawInfo, state.extraConfig);
-            // ctx.setDebugInfo("drawInfo", JSON.stringify(drawInfo));
-        } catch (e) {
-            setErrorInfo(`Fail to run PIDS script: ${e}`);
-        }
+            let gtHelper = getGtHelper();
+            try {
+                gtHelper.removeDrawGraphic(block);
+            } catch (e) {}
 
-        state.gt.upload();
+            state.drawFunction = new Function(
+                "g",
+                "detail",
+                `
+                var state = detail.state;var drawInfo = detail.drawInfo;var extraConfig = detail.extraConfig;
+                ${state.drawScript}
+                draw(g, state, drawInfo, extraConfig);
+            `
+            );
+            state.drawState = {};
+
+            let getDetailFunction = () => {
+                let arrivalInfoList = getArrivalInfoList(block, state);
+                let extraInfoList = [];
+                let drawInfo = { arrivalInfoList, extraInfoList, texArea: [0, 0, state.texW, state.texH], ctx, block, entity: block };
+                return { drawInfo, state: state.drawState, extraInfoList, extraConfig: state.extraConfig };
+            };
+            gtHelper.addDrawGraphic(
+                block,
+                {
+                    w: state.texW,
+                    h: state.texH,
+                    itemFamily: "PIDS",
+                    mainModel: state.mainModel,
+                    subModel: state.subModel,
+                    extra: state.extraConfig,
+                    plat: getShortId(getDrawPlats(state))
+                },
+                state.drawFunction,
+                getDetailFunction
+            );
+        } catch (e) {
+            setErrorInfo("Failed to parse draw function :" + e + ` (${e.stack})`);
+        } finally {
+            state.needRefFunc = false;
+        }
     }
+
+    // if (state.renderCD <= 0) {
+    //     //MinecraftClient.displayMessage("reloading pids..." + String(state.renderCD), false);
+    //     state.renderCD = isRelease ? 0.1 : 0.05;
+    //     let arrivalInfoList = getArrivalInfoList(block, state);
+    //     let extraInfoList = [];
+    //     //print("[DEBUG] arrivalInfoList: " + JSON.stringify(arrivalInfoList));
+    //     state.gt.upload();
+    //     let g = state.gt.graphics;
+    //     let drawInfo = { arrivalInfoList, extraInfoList, texArea: [0, 0, state.gt.width, state.gt.height], ctx, block, entity: block };
+
+    //     try {
+    //         state.drawFunction(g, state.drawState, drawInfo, state.extraConfig);
+    //         // ctx.setDebugInfo("drawInfo", JSON.stringify(drawInfo));
+    //     } catch (e) {
+    //         setErrorInfo(`Fail to run PIDS script: ${e}`);
+    //     }
+
+    //     state.gt.upload();
+    // }
 
     if (state.dmh.getUploadedModel() != null) {
         ctx.drawModel(state.dmh.getUploadedModel(), null);
     }
     if (state.dmhdisp.getUploadedModel() != null) {
         state.screenModel = state.dmhdisp.getUploadedModel();
-        state.screenModel.replaceAllTexture(state.gt.identifier);
-        ctx.drawModel(state.screenModel, null);
+        let gtHelper = getGtHelper();
+        let gt = gtHelper.getBlockGraphics(block);
+        if (gt) {
+            // ctx.setDebugInfo("gt", gt);
+            state.screenModel.replaceAllTexture(gt.identifier);
+            ctx.drawModel(state.screenModel, null);
+        }
     }
     state.renderCD -= Timing.delta();
 
@@ -404,9 +456,9 @@ function render(ctx, state, block) {
                 finalShape = [[0, 0, 0, 16, 16, 16]];
             } else
                 for (let subshape of shape) {
-                    // print(subshape);
-                    // print(rotateCollisionBox(subshape, Math.PI * block.rotateX, Math.PI * block.rotateY, Math.PI * block.rotateZ));
-                    finalShape = finalShape.concat(rotateCollisionBox(subshape, block.rotateX, block.rotateY, block.rotateZ, block.translateX * 16, block.translateY * 16, block.translateZ * 16));
+                    finalShape = finalShape.concat(
+                        rotateCollisionBox(subshape, block, block.rotateX, block.rotateY, block.rotateZ, block.translateX * 16, block.translateY * 16, block.translateZ * 16)
+                    );
                 }
             // print(finalShape);
             finalShape = collisionBoxArrToStr(finalShape);
@@ -417,16 +469,22 @@ function render(ctx, state, block) {
             state.needRefBox = false;
         }
 
-    ctx.setDebugInfo("renderCD", state.renderCD);
-    ctx.setDebugInfo("mainModel", block.getCustomConfig("mainModel"));
-    ctx.setDebugInfo("subModel", block.getCustomConfig("subModel"));
-    ctx.setDebugInfo("platformState", block.getCustomConfig("platformState"));
+    // ctx.setDebugInfo("renderCD", state.renderCD);
+    // ctx.setDebugInfo("mainModel", block.getCustomConfig("mainModel"));
+    // ctx.setDebugInfo("subModel", block.getCustomConfig("subModel"));
+    // ctx.setDebugInfo("platformState", block.getCustomConfig("platformState"));
 }
 
 function dispose(ctx, state, block) {
     try {
+        getGtHelper().removeDrawGraphic(block);
+    } catch (e) {
+        setWarnInfo(e);
+    }
+    try {
         state.dmh.close();
         state.dmhdisp.close();
+
         state.gt.close();
     } catch (e) {}
 }
@@ -460,13 +518,31 @@ function use(ctx, state, block, player) {
     if (state.model.extraConfig) {
         state.model.extraConfig.forEach((cfg) => {
             let param = cfg.param;
-            param.default = state.extraConfig[param.savePos] ? state.extraConfig[param.savePos] : cfg.default;
+            if (cfg.type == "list") {
+                param.default = cfg.default;
+                let currentVal = state.extraConfig[param.savePos];
+                if (currentVal)
+                    param.listItems.forEach((item, index) => {
+                        if (item.val == currentVal) {
+                            param.default = index;
+                        }
+                    });
+            } else param.default = state.extraConfig[param.savePos] ? state.extraConfig[param.savePos] : cfg.default;
             configs.push(buildConfigItem(ComponentUtil.getString(ComponentUtil.translatable(cfg.text)), cfg.type, param));
         });
     }
 
     let sc = createConfigSc(configs, null, { ctx, state, entity: block, block }, { title: ComponentUtil.getString(ComponentUtil.translatable("cfg.title")) });
     displayConfigSc(sc);
+}
+
+function getDrawPlats(state) {
+    let drawPlats = [];
+    for (let platformState of state.platformState) {
+        if (!platformState.flag) continue;
+        drawPlats.push(String(new java.lang.Long(platformState.platformId)));
+    }
+    return drawPlats;
 }
 
 function getArrivalInfoList(block, state) {

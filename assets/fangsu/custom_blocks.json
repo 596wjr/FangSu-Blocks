@@ -1,27 +1,25 @@
 {
     "ticketBarrier": [
-        {
-            "text": "fangsu.item.ticketbarrier.beijing.text",
-            "content": "fangsu:ticketbarrier/beijing_barrier.json"
-        }
+        
     ],
     "screendoor": [
         {
-            "text": "fangsu.item.screendoor.bg1.text",
-            "content": "fangsu:screendoor/bj/bg1.json",
-            "contentText": "fangsu.item.screendoor.bg1.contentText"
+            "text": "fangsu.item.screendoor_qg1.text",
+            "content": "fangsu:screendoor/kaba.json",
+            "contentText": "fangsu.item.screendoor_qg1.contentText"
         },
         {
-            "text": "fangsu.item.screendoor.qg1.text",
-            "content": "fangsu:screendoor/bj/qg1.json",
-            "contentText": "fangsu.item.screendoor.qg1.contentText"
+            "text": "fangsu.item.screendoor_qg2.text",
+            "content": "fangsu:screendoor/mtr_screendoor_b.json",
+            "contentText": "fangsu.item.screendoor_qg2.contentText"
         }
     ],
     "diaoban": [
         {
-            "text": "fangsu.item.diaoban.hanging_panel.text",
-            "content": "fangsu:screendoor/bj/diaoban.json"
+            "text":"fangsu.item.diaoban.text",
+            "content":"fangsu:diaoban/mtr_diaoban.json"
         }
+        
     ],
     "pids": [
         {
@@ -34,15 +32,21 @@
         }
     ],
     "sign": [
-        {
-            "text": "fangsu.item.sign.beijing_sign.text",
-            "content": "fangsu:sign/beijing/beijing_sign.json"
-        }
+        
     ],
     "adv_board": [
         {
-            "text": "fangsu.item.adv_board.beijing_adv.text",
-            "content": "fangsu:adv_board/beijing_adv.json"
+            "text": "fangsu.item.adv_board.common_adv.text",
+            "content": "fangsu:adv_board/common_adv.json"
+        }
+    ],
+    "route_info_sign":[
+        {
+            "text":"fangsu.item.ris.mtr",
+            "content":"fangsu:route_info_sign/mtr_route_info_sign.json",
+            "default":{
+                "subModel":"mtr_ris_wm"
+            }
         }
     ]
 }

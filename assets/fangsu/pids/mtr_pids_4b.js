@@ -17,6 +17,7 @@ var draw = (g, state, drawInfo, extraConfig) => {
     g.setFont(font);
     g.setColor(rgbToColor(252, 151, 0));
     var arrivalInfo = arrivalInfoList[0];
+    if (!arrivalInfo) return;
     var arrivingTime = parseInt((arrivalInfo.arrivalMillis - Date.now()) / 1000);
     var forwardStations = arrivalInfo.stationNames.slice(arrivalInfo.currentStationIndex);
     var pages = Math.ceil(forwardStations.length / 11);

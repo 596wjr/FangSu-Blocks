@@ -32,7 +32,7 @@ function displayConfigScreen(screen) {
         let tex = screen.texture;
         let g = tex.graphics;
         let state = screen.state;
-        let font = loadRes(resSc, "font", "mtrsteamloco:fonts/ys.ttf");
+        let font = loadRes(resSc, "font", "mtrsteamloco:fonts/misans-bold.otf");
         let { width: w, height: h } = tex;
         let posRateX = w / state.w;
         let posRateY = h / state.h;
@@ -54,11 +54,11 @@ function displayConfigScreen(screen) {
 
             //g.setColor(Color.BLUE);
             //g.fillRect(0, 0, w, h);
-            g.setFont(font.deriveFont(lineHeight * 0.8));
+            g.setFont(font.deriveFont(Font.PLAIN, lineHeight * 0.8));
             g.setColor(Color.WHITE);
             //title
             g.drawString(ComponentUtil.getString(ComponentUtil.translatable("cfg.title")), w * 0.1, lineHeight * 0.9);
-            g.setFont(font.deriveFont(lineHeight * 0.6));
+            g.setFont(font.deriveFont(Font.PLAIN, lineHeight * 0.6));
             // for (let i = 1; i <= dispPage.items.length; i++) {
             //     let drawY = (0.5 + i) * lineHeight;
             //     g.setColor(rgbToColor(215, 211, 200));
@@ -79,13 +79,13 @@ function displayConfigScreen(screen) {
             //     }
 
             //     // if (posRateY * y < drawY + lineHeight && posRateY * y >= drawY) {
-            //     //     //g.setFont(font.deriveFont(Font.BOLD, lineHeight * 0.8));
+            //     //     //g.setFont(font.deriveFont(Font.PLAIN, Font.BOLD, lineHeight * 0.8));
             //     //     // g.setColor(Color.RED);
             //     //     // g.fillRect(0, drawY, w, lineHeight);
             //     //     // g.setColor(Color.WHITE);
             //     //     g.setColor(Color.WHITE);
             //     // } else {
-            //     //     //g.setFont(font.deriveFont(lineHeight * 0.8));
+            //     //     //g.setFont(font.deriveFont(Font.PLAIN, lineHeight * 0.8));
             //     //     g.setColor(Color.LIGHT_GRAY);
             //     // }
             //     g.drawString(drawText, w * 0.025, drawY + lineHeight * 0.9);
@@ -128,19 +128,19 @@ function displayConfigScreen(screen) {
                 } else if (item.type == "mainModel" || item.type == "subModel") {
                     buttonText = ComponentUtil.getString(ComponentUtil.translatable("cfg.content.go"));
                 }
-                g.drawString(drawText, w * 0.05, drawY + lineHeight * 0.5 + g.getFontMetrics(font.deriveFont(lineHeight * 0.6)).getHeight() * 0.5);
+                g.drawString(drawText, w * 0.05, drawY + lineHeight * 0.5 + g.getFontMetrics(font.deriveFont(Font.PLAIN, lineHeight * 0.6)).getHeight() * 0.5);
                 g.setColor(selected ? rgbToColor(155, 155, 155) : rgbToColor(207, 204, 193));
                 if (item.type != "str")
                     g.drawString(
                         buttonText,
-                        w * 0.875 - 0.5 * g.getFontMetrics(font.deriveFont(lineHeight * 0.6)).stringWidth(buttonText),
-                        drawY + lineHeight * 0.5 + g.getFontMetrics(font.deriveFont(lineHeight * 0.6)).getHeight() * 0.5
+                        w * 0.875 - 0.5 * g.getFontMetrics(font.deriveFont(Font.PLAIN, lineHeight * 0.6)).stringWidth(buttonText),
+                        drawY + lineHeight * 0.5 + g.getFontMetrics(font.deriveFont(Font.PLAIN, lineHeight * 0.6)).getHeight() * 0.5
                     );
                 else
                     g.drawString(
                         buttonText,
-                        w * 0.7375 - 0.5 * g.getFontMetrics(font.deriveFont(lineHeight * 0.6)).stringWidth(buttonText),
-                        drawY + lineHeight * 0.5 + g.getFontMetrics(font.deriveFont(lineHeight * 0.6)).getHeight() * 0.5
+                        w * 0.7375 - 0.5 * g.getFontMetrics(font.deriveFont(Font.PLAIN, lineHeight * 0.6)).stringWidth(buttonText),
+                        drawY + lineHeight * 0.5 + g.getFontMetrics(font.deriveFont(Font.PLAIN, lineHeight * 0.6)).getHeight() * 0.5
                     );
 
                 if (state.clickInfo)
@@ -407,7 +407,7 @@ function displaySelectionScreen(screen) {
         let tex = screen.texture;
         let g = tex.graphics;
         let state = screen.state;
-        let font = loadRes(resSc, "font", "mtrsteamloco:fonts/ys.ttf");
+        let font = loadRes(resSc, "font", "mtrsteamloco:fonts/misans-bold.otf");
         let { width: w, height: h } = tex;
         let posRateX = w / state.w;
         let posRateY = h / state.h;
@@ -425,11 +425,11 @@ function displaySelectionScreen(screen) {
 
             //g.setColor(Color.BLUE);
             //g.fillRect(0, 0, w, h);
-            g.setFont(font.deriveFont(lineHeight * 0.4));
+            g.setFont(font.deriveFont(Font.PLAIN, lineHeight * 0.4));
             g.setColor(Color.WHITE);
             //title
             g.drawString(ComponentUtil.getString(ComponentUtil.translatable("cfg.title")), w * 0.1, lineHeight * 0.45);
-            g.setFont(font.deriveFont(lineHeight * 0.3));
+            g.setFont(font.deriveFont(Font.PLAIN, lineHeight * 0.3));
 
             let originalClip = g.getClip();
             g.setClip(new java.awt.Rectangle(0, lineHeight * 0.75, w * 0.3, lineHeight * 6.75));
@@ -458,7 +458,7 @@ function displaySelectionScreen(screen) {
 
                     let drawText = ComponentUtil.getString(ComponentUtil.translatable(item.text));
 
-                    g.drawString(drawText, w * 0.05, drawY + lineHeight * 0.25 + g.getFontMetrics(font.deriveFont(lineHeight * 0.6)).getHeight() * 0.5);
+                    g.drawString(drawText, w * 0.05, drawY + lineHeight * 0.25 + g.getFontMetrics(font.deriveFont(Font.PLAIN, lineHeight * 0.6)).getHeight() * 0.5);
 
                     if (state.clickInfo)
                         if (state.clickInfo.x >= pdbox.x1 && state.clickInfo.x <= pdbox.x2 && state.clickInfo.y >= pdbox.y1 && state.clickInfo.y <= pdbox.y2) {
@@ -478,12 +478,12 @@ function displaySelectionScreen(screen) {
                 g.setColor(rgbaToColor(0, 0, 0, 70));
                 g.fillRect(0, 0, w, h);
                 g.setColor(Color.WHITE);
-                g.setFont(Resources.getSystemFont("SansSerif").deriveFont(h * 0.1));
+                g.setFont(Resources.getSystemFont("SansSerif").deriveFont(Font.PLAIN, h * 0.1));
                 g.drawString("没有可用选项 No available options", 0, h * 0.5);
             }
             g.setClip(originalClip);
             if (state.selected != -1) {
-                let contentFont = font.deriveFont(lineHeight * 0.25);
+                let contentFont = font.deriveFont(Font.PLAIN, lineHeight * 0.25);
                 let item = configPageList[state.selected - 1];
                 if (state.content.cache != state.selected) {
                     state.contentScoll = 0;
@@ -547,9 +547,9 @@ function displaySelectionScreen(screen) {
                 g.setColor(confirmSelected ? rgbToColor(237, 229, 215) : rgbToColor(207, 204, 193));
                 g.fillRoundRect(w * 0.35, lineHeight * 6.8, w * 0.6, lineHeight * 0.7, lineHeight * 0.7, lineHeight * 0.7);
                 g.setColor(rgbToColor(77, 83, 100));
-                g.setFont(font.deriveFont(lineHeight * 0.45));
+                g.setFont(font.deriveFont(Font.PLAIN, lineHeight * 0.45));
                 let confirmStr = ComponentUtil.getString(ComponentUtil.translatable("cfg.confirm"));
-                g.drawString(confirmStr, w * 0.65 - 0.5 * g.getFontMetrics(font.deriveFont(lineHeight * 0.45)).stringWidth(confirmStr), lineHeight * 7.35);
+                g.drawString(confirmStr, w * 0.65 - 0.5 * g.getFontMetrics(font.deriveFont(Font.PLAIN, lineHeight * 0.45)).stringWidth(confirmStr), lineHeight * 7.35);
 
                 if (state.clickInfo)
                     if (
@@ -580,7 +580,7 @@ function displaySelectionScreen(screen) {
                 g.setColor(selected ? rgbaToColor(64, 64, 64, 60) : rgbaToColor(64, 64, 64, 80));
                 g.fillRect(w * 0.125, h * 0.95, w * 0.75, h * 0.04);
                 g.setColor(Color.WHITE);
-                g.setFont(loadResource("font", "mtrsteamloco:fonts/source-han-sans-bold.otf").deriveFont(h * 0.03));
+                g.setFont(loadResource("font", "mtrsteamloco:fonts/source-han-sans-bold.otf").deriveFont(Font.PLAIN, h * 0.03));
                 g.drawString(ComponentUtil.getString(ComponentUtil.translatable("cfg.respack")), w * 0.15, h * 0.985);
                 if (state.clickInfo && selected) {
                     if (
@@ -670,15 +670,15 @@ function dispErrScreen(Err) {
         g.setColor(Color.BLUE);
         g.fillRect(0, 0, w, h);
         g.setColor(Color.WHITE);
-        g.setFont(errorFont.deriveFont(h * 0.2));
+        g.setFont(errorFont.deriveFont(Font.PLAIN, h * 0.2));
         g.drawString(":(", w * 0.15, h * 0.3);
-        g.setFont(errorFont.deriveFont(h * 0.05));
+        g.setFont(errorFont.deriveFont(Font.PLAIN, h * 0.05));
         g.drawString("你的游戏出现了问题, 可能是自定义资源包的问题", w * 0.15, h * 0.4);
         g.drawString("请先恢复自定义配置, 如果仍旧错误可以寻求他人帮助", w * 0.15, h * 0.5);
 
         let currentLine = "";
         let txL = [];
-        let ft = errorFont.deriveFont(h * 0.03);
+        let ft = errorFont.deriveFont(Font.PLAIN, h * 0.03);
         for (let char of String(Err)) {
             let testLine = currentLine + char;
             let testWidth = g.getFontMetrics(ft).stringWidth(testLine);

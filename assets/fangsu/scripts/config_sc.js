@@ -61,17 +61,6 @@ include(Resources.id("fangsu:scripts/clipboard_manager.js"));
  *
  */
 function buildConfigItem(text, type, param) {
-    function getShortId(obj) {
-        let str = typeof obj === "string" ? obj : JSON.stringify(obj);
-
-        let hash = 0x811c9dc5;
-        for (let i = 0; i < str.length; i++) {
-            hash ^= str.charCodeAt(i);
-            hash *= 0x01000193;
-        }
-
-        return hash.toString(16);
-    }
     let finalParams = {};
     if (type == "str") {
         finalParams = {
@@ -179,21 +168,21 @@ function displayConfigSc(screen) {
         state.cacheTexInfo = { w, h };
 
         try {
-            let lineHeight = state.lineHeight;
+            let lineHeight = Number(state.lineHeight);
 
             g.setComposite(AlphaComposite.Clear); // 设置透明混合模式
             g.fillRect(0, 0, w, h); // 填充整个区域
             g.setComposite(AlphaComposite.SrcOver); // 恢复默认混合模式
 
-            let bgImage = loadResource("webimg", "https://image.hokubu.cn/i/2025/06/17/68514902d35f8.png");
-            if (bgImage.is_available) g.drawImage(bgImage.get_awt_image(), 0, 0, w, h, null);
+            let bgImage = loadResource("img", "mtrsteamloco:cfg/bg1.png");
+            g.drawImage(bgImage, 0, 0, w, h, null);
 
             g.setColor(rgbaToColor(0, 0, 0, 60));
             g.fillRect(0, 0, w, h);
             g.setColor(rgbaToColor(0, 0, 0, 30));
             g.fillRect(w * 0.1, lineHeight * 2.5 - h * 0.05, w * 0.8, lineHeight * 11 + h * 0.1);
             g.setColor(Color.WHITE);
-            drawStrDL(g, font, font, state.title, w * 0.5, lineHeight * 0.1, lineHeight * 0.7, 1, 1);
+            drawStrUnified(g, font, state.title, w * 0.5, lineHeight * 1.1, lineHeight * 0.7, 1, 1);
 
             let originalClip = g.getClip();
             g.setClip(new java.awt.Rectangle(0, lineHeight * 1.5, w, lineHeight * 12));
@@ -218,7 +207,7 @@ function displayConfigSc(screen) {
                 g.setColor(selected ? rgbaToColor(64, 64, 64, 65) : rgbaToColor(64, 64, 64, 35));
                 g.fillRect(w * 0.125, drawY + lineHeight * 0.05, w * 0.75, thisHeight - lineHeight * 0.1);
                 g.setColor(Color.WHITE);
-                g.setFont(font.deriveFont(lineHeight * 0.35));
+                g.setFont(font.deriveFont(Font.PLAIN, lineHeight * 0.35));
                 // g.drawString(item.text + "  " + JSON.stringify(param) + ((typeof (param.showConditition) == "function") ? param.showConditition + param.showConditition() : "true"), w * 0.15, drawY + lineHeight * 0.7);
                 g.drawString(item.text, w * 0.15, drawY + lineHeight * 0.7);
 
@@ -260,7 +249,7 @@ function displayConfigSc(screen) {
                     g.setClip(new java.awt.Rectangle(w * 0.525 - lineHeight * 0.1, drawY + lineHeight * 0.15, w * 0.35, thisHeight - lineHeight * 0.3));
 
                     for (let i = 0; i < lines.length; i++) {
-                        drawStrDL(g, font, font, lines[i], w * 0.7 - lineHeight * 0.1, drawY + (i + 0.5) * lineHeight * 0.5, lineHeight * 0.4, 1, 1);
+                        drawStrUnified(g, font, lines[i], w * 0.7 - lineHeight * 0.1, drawY + (i + 0.5) * lineHeight * 1.5, lineHeight * 0.4, 1, 1);
                     }
 
                     g.setClip(new java.awt.Rectangle(0, lineHeight * 1.5, w, lineHeight * 12));
@@ -304,15 +293,15 @@ function displayConfigSc(screen) {
                     }
 
                     g.setColor(Color.WHITE);
-                    drawStrDL(g, font, font, drawLines, w * 0.8 - lineHeight * 0.1, drawY + lineHeight * 0.3, lineHeight * 0.4, 1, 1);
+                    drawStrUnified(g, font, drawLines, w * 0.8 - lineHeight * 0.1, drawY + lineHeight * 0.8, lineHeight * 0.4, 1, 1);
                 } else if (item.type == "bool") {
                     g.setColor(rgbaToColor(255, 255, 255, 15));
                     g.fillRect(w * 0.725 - lineHeight * 0.1, drawY + lineHeight * 0.15, w * 0.15, thisHeight - lineHeight * 0.3);
                     g.setStroke(new BasicStroke(h * 0.0025));
-                    g.drawRect(w * 0.725 - lineHeight * 0.1, drawY + lineHeight * 0.15, w * 0.15, thisHeight - lineHeight * 0.3);
+                    g.drawRect(w * 0.725 - lineHeight * 0.1, drawY + lineHeight * 1.15, w * 0.15, thisHeight - lineHeight * 0.3);
 
                     g.setColor(Color.WHITE);
-                    drawStrDL(g, font, font, state.eyecandy.state.cacheConfig[param.savePos] ? "真" : "假", w * 0.8 - lineHeight * 0.1, drawY + lineHeight * 0.3, lineHeight * 0.4, 1, 1);
+                    drawStrUnified(g, font, state.eyecandy.state.cacheConfig[param.savePos] ? "真" : "假", w * 0.8 - lineHeight * 0.1, drawY + lineHeight * 0.8, lineHeight * 0.4, 1, 1);
                 } else if (item.type == "list") {
                     g.setColor(rgbaToColor(255, 255, 255, 15));
                     g.fillRect(w * 0.725 - lineHeight * 0.1, drawY + lineHeight * 0.15, w * 0.15, thisHeight - lineHeight * 0.3);
@@ -321,15 +310,13 @@ function displayConfigSc(screen) {
 
                     let selectedItem = param.listItems.length > 0 ? param.listItems[state.eyecandy.state.cacheConfig[param.savePos]] : null;
                     g.setColor(Color.WHITE);
-                    drawStrDL(
+                    drawStrUnified(
                         g,
                         font,
-                        font,
-                        selectedItem ? selectedItem.text : param.listItems + " " + state.eyecandy.state.cacheConfig[param.savePos],
+                        selectedItem ? ComponentUtil.getString(ComponentUtil.translatable(selectedItem.text)) : param.listItems + " " + state.eyecandy.state.cacheConfig[param.savePos],
                         w * 0.8 - lineHeight * 0.1,
-                        drawY + lineHeight * 0.3,
+                        drawY + lineHeight * 0.8,
                         lineHeight * 0.4,
-                        1,
                         1
                     );
                 }
@@ -351,7 +338,7 @@ function displayConfigSc(screen) {
                         try {
                             param.function();
                         } catch (e) {
-                            setErrorInfo("@ConfigScreen @Function @" + item.text + " : " + e);
+                            setErrorInfo(e);
                         }
                     } else if (item.type == "mainModel") {
                         displaySelectionScreen(createSelectionScreen({ type: param.type, save: "mainModel" }, screen, "mainModel", "mainModel", state.eyecandy));
@@ -444,11 +431,15 @@ function displayConfigSc(screen) {
         let finalConfig = screen.state.eyecandy.state.config;
         if (!finalConfig) finalConfig = {};
         screen.state.configPageList.forEach((element) => {
-            let param = element.param;
-            let type = element.type;
-            if (type == "num") finalConfig[param.savePos] = parseNumber(cacheConfig[param.savePos]);
-            if (type == "list") finalConfig[param.savePos] = param.listItems.length > 0 ? param.listItems[cacheConfig[param.savePos]].val : null;
-            if (type == "str" || type == "bool") finalConfig[param.savePos] = cacheConfig[param.savePos];
+            try {
+                let param = element.param;
+                let type = element.type;
+                if (type == "num") finalConfig[param.savePos] = parseNumber(cacheConfig[param.savePos]);
+                if (type == "list") finalConfig[param.savePos] = param.listItems.length > 0 ? param.listItems[cacheConfig[param.savePos]].val : null;
+                if (type == "str" || type == "bool") finalConfig[param.savePos] = cacheConfig[param.savePos];
+            } catch (e) {
+                setWarnInfo(e);
+            }
         });
         screen.state.eyecandy.state.config = finalConfig;
         setDebugInfo("Config: " + JSON.stringify(screen.state.eyecandy.state.config));
