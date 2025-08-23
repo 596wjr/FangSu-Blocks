@@ -1,5 +1,5 @@
 ---
-name: 问题反馈 Bug report
+name: 功能建议 Feature Suggestions
 about: Create a report to help us improve
 title: ''
 labels: '[新 New,改进 Enhancement]'
